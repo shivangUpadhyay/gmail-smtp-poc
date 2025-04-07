@@ -1,4 +1,4 @@
-# gmail-smtp-poc
+# GMail SMTP PoC (Proof of Concept)
 A minimal and pure Java Spring Boot backend-only POC (proof-of-concept) implementing Forgot Password and Reset Password flows using JavaMailSender with Gmail SMTP, UUID-based token handling etc. No frontend required — tested via Postman.
 
 ## Configuration Before Running
@@ -10,13 +10,16 @@ A minimal and pure Java Spring Boot backend-only POC (proof-of-concept) implemen
   - spring.datasource.username=`INSERT_USERNAME_HERE`
   - spring.datasource.password=`INSERT_PASSWORD_HERE`
 
-## Features
-- Forgot password via email with secure token
-- Token expires in 15 minutes
-- Secure password reset
-- Token stored in database (with expiration)
-- Basic validation and exception handling
-- Clean separation of controller, service, entity, and DTO layers
+### Instructions and Workflow
+
+- Register the user via `/register` API endpoint.
+- Check `/login` endpoint with the same credentials.
+- To reset the password, call the `/forgot-password` endpoint and provide the registered email ID to receive the reset link.
+- Open the received link `localhost:8080/reset-password?token=....` in Postman.
+- With token already present as the query parameter, send the following JSON body in POST.
+  
+  - `{ "newPassword": "NEW_PASSWORD_HERE"}`  
+- Login with the new credentials using `/login` to verify.
 
 ### Technologies Used
 - Java 11
