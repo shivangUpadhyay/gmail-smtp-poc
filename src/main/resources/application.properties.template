@@ -1,0 +1,42 @@
+spring.application.name=smtp
+
+# Datasource Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/smtp_poc?createDatabaseIfNotExist=true
+spring.datasource.username=INSERT_USERNAME_HERE
+spring.datasource.password=INSERT_PASSWORD_HERE
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Hibernate DDL auto-generation (update schema automatically)
+spring.jpa.hibernate.ddl-auto=update
+
+# Enable debug-level logging for Spring Security
+logging.level.org.springframework.security=DEBUG
+logging.level.org.springframework.web=DEBUG
+
+# Reduce unnecessary logging noise
+logging.level.org.hibernate.SQL=ERROR
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=ERROR
+
+# Show SQL queries in the console
+spring.jpa.show-sql=true
+
+# Hibernate dialect for MySQL
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Format SQL output for better readability
+spring.jpa.properties.hibernate.format_sql=true
+
+# SQL script initialization mode (always run on startup)
+spring.sql.init.mode=always
+
+server.servlet.session.timeout=30m
+
+#======================
+# SMTP Configuration
+#======================
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=INSERT_GOOGLE_EMAIL_HERE
+spring.mail.password=INSERT_16_DIGIT_PASSWORD_HERE
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
