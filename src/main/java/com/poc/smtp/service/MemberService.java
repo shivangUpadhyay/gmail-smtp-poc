@@ -79,6 +79,13 @@ public class MemberService {
 
     }
 
+    /**
+     * Login user member.
+     *
+     * @param loginDTO the login dto
+     * @return the member
+     */
+
     public Member loginUser(LoginDTO loginDTO) {
         if (loginDTO.getEmailId() == null || loginDTO.getEmailId().trim().isEmpty()) {
             throw new IllegalArgumentException("Email ID cannot be null or empty");
@@ -97,6 +104,14 @@ public class MemberService {
 
         return member;
     }
+
+
+    /**
+     *
+     * Sends Reset token to the registered email ID.
+     *
+     * @param email the email
+     */
 
     public void forgotPassword(String email) {
         Member member = memberRepository.findByEmailId(email)
@@ -119,7 +134,8 @@ public class MemberService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Password Reset Requested!");
-        message.setText("Please click the following link to reset your password, it is only valid for 15 minutes: " + resetLink + "Please contact support if you did not request this.");
+        message.setText("Please click the following link to reset your password. It is only valid for 15 minutes:\n\n"
+                + resetLink + "\n\nIf you did not request this, please contact support.");
         mailSender.send(message);
     }
 
