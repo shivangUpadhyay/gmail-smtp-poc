@@ -33,7 +33,8 @@ private final MemberService memberService;
             Member member = memberService.loginUser(loginDTO);
             MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
             return RestUtil.success(responseDTO); // 200 OK
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
 
             // Use 401 if credentials are incorrect, 400 if it's validation (e.g., empty fields)
             String msg = e.getMessage();
@@ -41,7 +42,8 @@ private final MemberService memberService;
                 return RestUtil.failure(msg, HttpStatus.UNAUTHORIZED); // 401
             }
             return RestUtil.failure(msg, HttpStatus.BAD_REQUEST); // 400
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return RestUtil.failure("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR); // 500
         }
     }
@@ -52,18 +54,27 @@ private final MemberService memberService;
             Member member = memberService.registerUser(registrationDTO);
             MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
             return RestUtil.created(responseDTO);
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             return RestUtil.failure(e.getMessage(), HttpStatus.BAD_REQUEST); //400
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return RestUtil.failure("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     @PostMapping("/forgot-password")
-    public String forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
-
-        return "Password reset link sent to: " + forgotPasswordDTO.getEmailId();
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+        try {
+            memberService.forgotPassword(forgotPasswordDTO.getEmailId());
+            return RestUtil.success("Reset password link sent to your registered email.");
+        }
+        catch (IllegalArgumentException e) {
+            return RestUtil.failure(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return RestUtil.failure("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
