@@ -40,3 +40,6 @@ spring.mail.username=INSERT_GOOGLE_EMAIL_HERE
 spring.mail.password=INSERT_16_DIGIT_PASSWORD_HERE
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
+
+#Base URL for Password Reset (Default set to 8080, change if needed)
+reset.password.base-url=http://localhost:8080
