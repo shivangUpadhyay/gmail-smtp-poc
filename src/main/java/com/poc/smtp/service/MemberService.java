@@ -124,8 +124,9 @@ public class MemberService {
         // Generate token
         String token = UUID.randomUUID().toString();
 
-        // Expire in 15 minutes
-        LocalDateTime expiry = LocalDateTime.now().plusMinutes(15);
+        // Expiry time
+        long expiryTime = 10; // in minutes
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(expiryTime);
 
         // Save token
         PasswordResetToken resetToken = new PasswordResetToken(token, member, expiry);
@@ -138,7 +139,7 @@ public class MemberService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email); //Recipient
         message.setSubject("Password Reset Requested!");
-        message.setText("Please click the following link to reset your password. It is only valid for 15 minutes:\n\n"
+        message.setText("Please click the following link to reset your password. It is only valid for " + expiryTime + " minutes:\n\n"
                 + resetLink + "\n\nIf you did not request this, please contact support.");
         mailSender.send(message);
 
