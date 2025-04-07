@@ -28,9 +28,22 @@ private final MemberService memberService;
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+        try {
+            Member member = memberService.loginUser(loginDTO);
+            MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
+            return RestUtil.success(responseDTO); // 200 OK
+        } catch (IllegalArgumentException e) {
 
-        return "Login successful for user: " + loginDTO.getEmailId();
+            // Use 401 if credentials are incorrect, 400 if it's validation (e.g., empty fields)
+            String msg = e.getMessage();
+            if ("Invalid email".equals(msg) || "Invalid password".equals(msg)) {
+                return RestUtil.failure(msg, HttpStatus.UNAUTHORIZED); // 401
+            }
+            return RestUtil.failure(msg, HttpStatus.BAD_REQUEST); // 400
+        } catch (Exception e) {
+            return RestUtil.failure("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR); // 500
+        }
     }
 
     @PostMapping("/register")
@@ -40,7 +53,7 @@ private final MemberService memberService;
             MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
             return RestUtil.created(responseDTO);
         } catch (IllegalArgumentException e) {
-            return RestUtil.failure(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return RestUtil.failure(e.getMessage(), HttpStatus.BAD_REQUEST); //400
         } catch (Exception e) {
             return RestUtil.failure("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }

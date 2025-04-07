@@ -1,5 +1,6 @@
 package com.poc.smtp.service;
 
+import com.poc.smtp.dto.LoginDTO;
 import com.poc.smtp.dto.RegistrationDTO;
 import com.poc.smtp.entity.Member;
 import com.poc.smtp.repository.MemberRepository;
@@ -55,6 +56,26 @@ public class MemberService {
         return memberRepository.save(member);
 
     }
+
+    public Member loginUser(LoginDTO loginDTO) {
+        if (loginDTO.getEmailId() == null || loginDTO.getEmailId().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email ID cannot be null or empty");
+        }
+
+        if (loginDTO.getPassword() == null || loginDTO.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+
+        Member member = memberRepository.findByEmailId(loginDTO.getEmailId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email"));
+
+        if (!passwordEncoder.matches(loginDTO.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        return member;
+    }
+
 
 
 }
