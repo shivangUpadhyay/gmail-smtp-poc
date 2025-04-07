@@ -6,6 +6,7 @@ import com.poc.smtp.dto.MemberResponseDTO;
 import com.poc.smtp.dto.RegistrationDTO;
 import com.poc.smtp.entity.Member;
 import com.poc.smtp.service.MemberService;
+import com.poc.smtp.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,18 @@ private final MemberService memberService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegistrationDTO registrationDTO) {
-
-        Member member = memberService.registerUser(registrationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(MemberResponseDTO.fromEntity(member));
-
+    public ResponseEntity<?> register(@RequestBody RegistrationDTO registrationDTO) {
+        try {
+            Member member = memberService.registerUser(registrationDTO);
+            MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
+            return RestUtil.created(responseDTO);
+        } catch (IllegalArgumentException e) {
+            return RestUtil.failure(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return RestUtil.failure("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
