@@ -3,6 +3,7 @@ package com.poc.smtp.controller;
 import com.poc.smtp.dto.*;
 import com.poc.smtp.entity.Member;
 import com.poc.smtp.service.MemberService;
+import com.poc.smtp.util.RestResponse;
 import com.poc.smtp.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ public class LoginController {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
     private final MemberService memberService;
 
     public LoginController(MemberService memberService, BCryptPasswordEncoder passwordEncoder) {
@@ -25,7 +25,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<RestResponse<Object>> login(@RequestBody LoginDTO loginDTO) {
         try {
             Member member = memberService.loginUser(loginDTO);
             MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
@@ -44,7 +44,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegistrationDTO registrationDTO) {
+    public ResponseEntity<RestResponse<Object>> register(@RequestBody RegistrationDTO registrationDTO) {
         try {
             Member member = memberService.registerUser(registrationDTO);
             MemberResponseDTO responseDTO = MemberResponseDTO.fromEntity(member);
@@ -57,7 +57,7 @@ public class LoginController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+    public ResponseEntity<RestResponse<Object>> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
         try {
             memberService.forgotPassword(forgotPasswordDTO.getEmailId());
             return RestUtil.success("Reset password link sent to your registered email.");
@@ -76,7 +76,7 @@ public class LoginController {
     }*/
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
+    public ResponseEntity<RestResponse<Object>> resetPassword(@RequestParam("token") String token,
                                            @RequestBody ResetPasswordDTO resetPasswordDTO) {
         try {
             memberService.resetPassword(token, resetPasswordDTO.getNewPassword());
