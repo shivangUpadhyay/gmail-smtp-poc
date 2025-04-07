@@ -1,9 +1,6 @@
 package com.poc.smtp.controller;
 
-import com.poc.smtp.dto.ForgotPasswordDTO;
-import com.poc.smtp.dto.LoginDTO;
-import com.poc.smtp.dto.MemberResponseDTO;
-import com.poc.smtp.dto.RegistrationDTO;
+import com.poc.smtp.dto.*;
 import com.poc.smtp.entity.Member;
 import com.poc.smtp.service.MemberService;
 import com.poc.smtp.util.RestUtil;
@@ -71,11 +68,27 @@ public class LoginController {
         }
     }
 
+    /*@Deprecated
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
 
         return RestUtil.failure("Not implemented yet", HttpStatus.NOT_IMPLEMENTED);
+    }*/
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
+                                           @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        try {
+            memberService.resetPassword(token, resetPasswordDTO.getNewPassword());
+            return RestUtil.success("Password reset successfully.");
+        } catch (IllegalArgumentException e) {
+            return RestUtil.failure(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return RestUtil.failure("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
 
 
 }

@@ -137,6 +137,25 @@ public class MemberService {
         message.setText("Please click the following link to reset your password. It is only valid for 15 minutes:\n\n"
                 + resetLink + "\n\nIf you did not request this, please contact support.");
         mailSender.send(message);
+
+        System.out.println("Reset link: " + resetLink); //for logging
+
     }
+
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired token"));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Token has expired");
+        }
+        Member member = resetToken.getMember();
+        member.setPassword(passwordEncoder.encode(newPassword));
+        memberRepository.save(member);
+
+        tokenRepository.delete(resetToken); // Clean up used token
+    }
+
+
 
 }
