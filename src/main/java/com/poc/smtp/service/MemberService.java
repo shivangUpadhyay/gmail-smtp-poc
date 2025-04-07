@@ -7,6 +7,7 @@ import com.poc.smtp.entity.PasswordResetToken;
 import com.poc.smtp.repository.MemberRepository;
 import com.poc.smtp.repository.PasswordResetTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,6 +32,9 @@ public class MemberService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Value("${reset.password.base-url}")
+    private String resetBaseUrl;
 
     public MemberService(MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
@@ -128,17 +132,17 @@ public class MemberService {
         tokenRepository.save(resetToken);
 
         // Compose reset link
-        String resetLink = "http://localhost:8080/reset-password?token=" + token;
+        String resetLink = resetBaseUrl + "/reset-password?token=" + token;
 
         // Send email
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
+        message.setTo(email); //Recipient
         message.setSubject("Password Reset Requested!");
         message.setText("Please click the following link to reset your password. It is only valid for 15 minutes:\n\n"
                 + resetLink + "\n\nIf you did not request this, please contact support.");
         mailSender.send(message);
 
-        System.out.println("Reset link: " + resetLink); //for logging
+        System.out.println("Reset link: " + resetLink); // To avoid opening mail
 
     }
 
